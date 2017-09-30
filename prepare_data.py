@@ -23,12 +23,20 @@ def read_fea(path):
 def read_fea_libsvm(path):
     idx2feas = {}
     with open(path, 'r') as f:
-        exs = f.readlines()
-        for i, l in enumerate(exs):
+        for i, l in enumerate(f.readlines()):
             ex = l.strip().split()[1:]
+            ids = ' '.join([f.split(':')[0] for f in ex])
             feas = ' '.join([f.split(':')[1] for f in ex])
-            idx2feas[i] = feas
-    return idx2feas  
+            idx2feas[i] = (ids, feas)
+    return idx2feas
+
+def read_cnt2v(path):
+    idx2feas = {}
+    with open(path, 'r') as f:
+        for i, l in enumerate(f.readlines()):
+            idfea = l[l.index(' ') + 1 :].strip()
+            idx2feas[i] = idfea
+    return idx2feas
 
 def read_i2l(path):
     idx2value = {}
@@ -54,23 +62,28 @@ trainidpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/train'
 testidpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/test'
 adjpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/graph'
 
-feai2v = read_fea(feapath)
+# feapath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/svd_features_10.txt'
+# labelpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/label.txt'
+# trainidpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/train_idx.txt'
+# testidpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/test_idx.txt'
+# adjpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/adj_list.txt'
+
+feai2v = read_cnt2v(feapath)
 labeli2v= read_i2l(labelpath)
-n2n = read_i2l(adjpath)
+n2n = read_cnt2v(adjpath)
 traini2v = read_i(trainidpath)
 testi2v = read_i(testidpath)
 
-fea_size = 2
 
-out_path = r'/Users/jianbinlin/DDNN/project/stru2vec_data/samples_test.txt'
+out_path = r'/Users/jianbinlin/DDNN/project/stru2vec_data/samples_train.txt'
 
 i2v = {}
 
-for i in testi2v:
+for i in traini2v:
     
     label = labeli2v[i]    
 
-    fea = ' '.join(map(str, np.zeros(fea_size)))
+    fea = ''
     if i in feai2v:
         fea = feai2v[i]
     else:
@@ -82,11 +95,9 @@ for i in testi2v:
     else:
         print "{} n2n not found".format(i)
 
-    i2v[i] = "{0} {1} {2}".format(label, fea, neig)
+    i2v[i] = "{0}\t{1}\t{2}".format(label, fea, neig)
 
 
 with open(out_path, 'w') as outf:
     for k, v in i2v.iteritems():
-        outf.writelines("{} {}\n".format(k, v))
-
-
+        outf.writelines("{}\t{}\n".format(k, v))
