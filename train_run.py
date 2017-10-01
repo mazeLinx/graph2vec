@@ -7,7 +7,7 @@ import tensorflow as tf
 import model as model
 
 #dataset
-tf.app.flags.DEFINE_string('dataset_dir', '/Users/jianbinlin/DDNN/project/stru2vec_data/', 'The directory where the dataset files are stored.')
+tf.app.flags.DEFINE_string('dataset_dir', '~/DDNN/project/stru2vec_data/', 'The directory where the dataset files are stored.')
 tf.app.flags.DEFINE_integer('label_size', 2, 'The number of lable size for each sample.')
 tf.app.flags.DEFINE_integer('fea_size', 4000, 'The number of dense feature size.')
 tf.app.flags.DEFINE_integer('sample_size', 201631, 'total number of input samples')
@@ -17,7 +17,7 @@ tf.app.flags.DEFINE_integer('node_size', 981749, 'The number of nodes in trainin
 tf.app.flags.DEFINE_integer('h1', 16, 'The number of 1st hidden node.')
 tf.app.flags.DEFINE_integer('embedding_size', 16, 'embedding size')
 tf.app.flags.DEFINE_integer('batch_size', 32, 'The number of samples in each batch.')
-tf.app.flags.DEFINE_integer('num_epochs', 150, 'The number of training epoch.')
+tf.app.flags.DEFINE_integer('num_epochs', 500, 'The number of training epoch.')
 tf.app.flags.DEFINE_integer('l2', 0.1, 'l2 factor')
 tf.app.flags.DEFINE_integer('lr', 0.0001, 'init learning rate')
 tf.app.flags.DEFINE_integer('lr_decay_factor', 1, 'learning rate decay ratio')
@@ -33,7 +33,7 @@ FLAGS = tf.app.flags.FLAGS
 
 
 def main(_):
-    logging_path = "./output/log1/train_{}.log".format(time.strftime("%m%d_%H_%M_%S", time.localtime()))
+    logging_path = "./output/log1001/train_{}.log".format(time.strftime(time.strftime("%m%d-%H_%M_%S", time.localtime())))
     logging.basicConfig(filename=logging_path, level=logging.INFO, format='%(asctime)s %(message)s\t', datefmt='%Y-%m-%d %H:%M:%S')
 
     for k, v in FLAGS.__flags.iteritems():

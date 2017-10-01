@@ -10,7 +10,7 @@ import tensorflow as tf
 import model as model
 
 #data set
-tf.app.flags.DEFINE_string('dataset_dir', '/Users/jianbinlin/DDNN/project/stru2vec_data/', 'The directory where the dataset files are stored.')
+tf.app.flags.DEFINE_string('dataset_dir', '~/DDNN/project/stru2vec_data/', 'The directory where the dataset files are stored.')
 tf.app.flags.DEFINE_integer('label_size', 2, 'The number of lable size for each sample.')
 tf.app.flags.DEFINE_integer('fea_size', 4000, 'The number of dense feature size.')
 tf.app.flags.DEFINE_integer('sample_size', 31682, 'total number of input samples')
@@ -85,18 +85,14 @@ def get_para(path):
 
 def main(_):
 
-    logging.basicConfig(
-        filename="./output/log1/eval_{}.log".format(time.strftime("%m%d_%H_%M_%S", time.localtime())), 
-        level=logging.INFO,
-        format='%(asctime)s %(message)s\t',
-        datefmt='%Y-%m-%d %H:%M:%S'
-        )
+    logging_path = "./output/log1/eval_{}.log".format(time.strftime("%m%d-%H_%M_%S", time.localtime()))
+    logging.basicConfig(filename=logging_path, level=logging.INFO, format='%(asctime)s %(message)s\t', datefmt='%Y-%m-%d %H:%M:%S')
 
-    train_log = "/Users/jianbinlin/DDNN/project/output/log1/train_0930_18_43_07.log"
+    train_log = "~/DDNN/project/output/log1001/train_1001-08_39_56.log"
     logging.info(train_log)
     logging.info(get_para(train_log))
 
-    for iter in np.arange(0, 121, 10):
+    for iter in np.arange(0, 151, 10):
         with tf.Graph().as_default() as g:
             label, fea, neig_id, neig_value = model.inputs("test.tfrecord")
 
@@ -113,7 +109,7 @@ def main(_):
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(coord=coord)
             
-                saver.restore(sess, '/Users/jianbinlin/DDNN/project/output/model1/model-{}'.format(iter))
+                saver.restore(sess, '~/DDNN/project/output/model1/model-{}'.format(iter))
         
                 for i in xrange(FLAGS.sample_size):                                                                                                                                                                                 
                     res_y, res_y_, res_loss = sess.run([label, logit, loss])
