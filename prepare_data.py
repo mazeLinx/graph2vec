@@ -56,17 +56,17 @@ def read_i(path):
     return l
 
 
-feapath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/feature'
-labelpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/label'
-trainidpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/train'
-testidpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/test'
-adjpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/graph'
+# feapath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/feature'
+# labelpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/label'
+# trainidpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/train'
+# testidpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/test'
+# adjpath = r'/Users/jianbinlin/DDNN/project/stru2vec_data/graph'
 
-# feapath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/svd_features_10.txt'
-# labelpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/label.txt'
-# trainidpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/train_idx.txt'
-# testidpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/test_idx.txt'
-# adjpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/adj_list.txt'
+feapath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/svd_features_10.txt'
+labelpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/label.txt'
+trainidpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/train_idx.txt'
+testidpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/test_idx.txt'
+adjpath = r'/Users/jianbinlin/DDNN/project/stru2vec/data/adj_list.txt'
 
 feai2v = read_cnt2v(feapath)
 labeli2v= read_i2l(labelpath)
@@ -75,11 +75,11 @@ traini2v = read_i(trainidpath)
 testi2v = read_i(testidpath)
 
 
-out_path = r'/Users/jianbinlin/DDNN/project/stru2vec_data/samples_train.txt'
+out_path = r'/Users/jianbinlin/DDNN/project/stru2vec_data/samples10_test.txt'
 
 i2v = {}
 
-for i in traini2v:
+for i in testi2v:
     
     label = labeli2v[i]    
 

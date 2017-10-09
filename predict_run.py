@@ -10,17 +10,20 @@ import tensorflow as tf
 import model as model
 
 #data set
-tf.app.flags.DEFINE_string('dataset_dir', '~/DDNN/project/stru2vec_data/', 'The directory where the dataset files are stored.')
+tf.app.flags.DEFINE_string('dataset_dir', '/Users/jianbinlin/DDNN/project/stru2vec_data/', 'The directory where the dataset files are stored.')
 tf.app.flags.DEFINE_integer('label_size', 2, 'The number of lable size for each sample.')
 tf.app.flags.DEFINE_integer('fea_size', 4000, 'The number of dense feature size.')
 tf.app.flags.DEFINE_integer('sample_size', 31682, 'total number of input samples')
 tf.app.flags.DEFINE_integer('node_size', 981749, 'The number of nodes in training data.')
+# tf.app.flags.DEFINE_integer('sample_size', 10312, 'total number of input samples')
+# tf.app.flags.DEFINE_integer('node_size', 10312, 'The number of nodes in training data.')
 
 #model
 tf.app.flags.DEFINE_integer('num_epochs', 1, 'The number of training epoch.')
-tf.app.flags.DEFINE_integer('h1', 16, 'The number of 1st hidden node.')
-tf.app.flags.DEFINE_integer('embedding_size', 16, 'embedding size')
+tf.app.flags.DEFINE_integer('h1', 64, 'The number of 1st hidden node.')
+tf.app.flags.DEFINE_integer('embedding_size', 12, 'embedding size')
 tf.app.flags.DEFINE_integer('batch_size', 1, 'The number of samples in each batch.')
+tf.app.flags.DEFINE_integer('l2', 0.0001, 'l2 factor')
 
 
 #saver
@@ -85,14 +88,14 @@ def get_para(path):
 
 def main(_):
 
-    logging_path = "./output/log1/eval_{}.log".format(time.strftime("%m%d-%H_%M_%S", time.localtime()))
+    logging_path = "./output/log1002/eval_{}.log".format(time.strftime("%m%d-%H_%M_%S", time.localtime()))
     logging.basicConfig(filename=logging_path, level=logging.INFO, format='%(asctime)s %(message)s\t', datefmt='%Y-%m-%d %H:%M:%S')
 
-    train_log = "~/DDNN/project/output/log1001/train_1001-08_39_56.log"
+    train_log = "/Users/jianbinlin/DDNN/project/output/log1002/train_1009-13_35_14.log"
     logging.info(train_log)
     logging.info(get_para(train_log))
 
-    for iter in np.arange(0, 151, 10):
+    for iter in np.arange(0, 501, 10):
         with tf.Graph().as_default() as g:
             label, fea, neig_id, neig_value = model.inputs("test.tfrecord")
 
@@ -109,7 +112,7 @@ def main(_):
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(coord=coord)
             
-                saver.restore(sess, '~/DDNN/project/output/model1/model-{}'.format(iter))
+                saver.restore(sess, '/Users/jianbinlin/DDNN/project/output/model1/model-{}'.format(iter))
         
                 for i in xrange(FLAGS.sample_size):                                                                                                                                                                                 
                     res_y, res_y_, res_loss = sess.run([label, logit, loss])
