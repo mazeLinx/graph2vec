@@ -10,13 +10,11 @@ import tensorflow as tf
 import model as model
 
 #data set
-tf.app.flags.DEFINE_string('dataset_dir', '/Users/jianbinlin/DDNN/project/stru2vec_data/', 'The directory where the dataset files are stored.')
+tf.app.flags.DEFINE_string('dataset_dir', '/Users/jianbinlin/DDNN/project/stru2vec_data/garbage_account/', 'The directory where the dataset files are stored.')
 tf.app.flags.DEFINE_integer('label_size', 2, 'The number of lable size for each sample.')
 tf.app.flags.DEFINE_integer('fea_size', 4000, 'The number of dense feature size.')
 tf.app.flags.DEFINE_integer('sample_size', 31682, 'total number of input samples')
-tf.app.flags.DEFINE_integer('node_size', 981749, 'The number of nodes in training data.')
-# tf.app.flags.DEFINE_integer('sample_size', 10312, 'total number of input samples')
-# tf.app.flags.DEFINE_integer('node_size', 10312, 'The number of nodes in training data.')
+tf.app.flags.DEFINE_integer('node_size', 981750, 'The number of nodes in training data.')
 
 #model
 tf.app.flags.DEFINE_integer('num_epochs', 1, 'The number of training epoch.')
@@ -33,6 +31,13 @@ tf.app.flags.DEFINE_string('check_point', 'model/model', 'the directory of check
 FLAGS = tf.app.flags.FLAGS
 
 
+def aucscore(scores):
+    y_true = np.array([i[0] for i in scores]).astype(int)
+    y_hat = np.array([i[1] for i in scores])
+
+    auc = metrics.roc_auc_score(y_true, y_hat, average=None)
+
+    return max(auc)
 
 def f1score(scores):
     test_f1 = 0.0
@@ -55,8 +60,10 @@ def f1score(scores):
             y_true_te_tmp = y_true_te[:,j].astype(int)
             
             te_f1 = metrics.f1_score(y_true_te_tmp, y_hat_te_tmp, pos_label=1)
-            precision = metrics.precision_score(y_true_te_tmp, y_hat_te_tmp, pos_label=1)
-            recall = metrics.recall_score(y_true_te_tmp, y_hat_te_tmp, pos_label=1)
+            # precision = metrics.precision_score(y_true_te_tmp, y_hat_te_tmp, pos_label=1)
+            # recall = metrics.recall_score(y_true_te_tmp, y_hat_te_tmp, pos_label=1)
+            precision = 0.0
+            recall = 0.0
             if te_f1 > best_te_f1:
                 best_te_f1 = te_f1
                 best_thresh = thresh
@@ -75,8 +82,6 @@ def f1score(scores):
 
     return ave_loss, test_f1
 
- 
-
 def get_para(path):
     res = ""
     with open(path, 'r') as inf:
@@ -88,16 +93,16 @@ def get_para(path):
 
 def main(_):
 
-    logging_path = "./output/log1002/eval_{}.log".format(time.strftime("%m%d-%H_%M_%S", time.localtime()))
+    logging_path = FLAGS.dataset_dir + "output/log/eval_{}.log".format(time.strftime("%m%d-%H_%M_%S", time.localtime()))
     logging.basicConfig(filename=logging_path, level=logging.INFO, format='%(asctime)s %(message)s\t', datefmt='%Y-%m-%d %H:%M:%S')
 
-    train_log = "/Users/jianbinlin/DDNN/project/output/log1002/train_1009-13_35_14.log"
+    train_log = "/Users/jianbinlin/DDNN/project/stru2vec_data/garbage_account/output/log/train_1221-17_32_10.log"
     logging.info(train_log)
     logging.info(get_para(train_log))
 
-    for iter in np.arange(0, 501, 10):
+    for iter in np.arange(0, 100, 2):
         with tf.Graph().as_default() as g:
-            label, fea, neig_id, neig_value = model.inputs("test.tfrecord")
+            label, fea, neig_id, neig_value = model.inputs(FLAGS.dataset_dir + "test.tfrecord")
 
             logit, loss = model.inference(label, fea, neig_id, neig_value)
             
@@ -112,7 +117,7 @@ def main(_):
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(coord=coord)
             
-                saver.restore(sess, '/Users/jianbinlin/DDNN/project/output/model1/model-{}'.format(iter))
+                saver.restore(sess, FLAGS.dataset_dir + 'output/model/model-{}'.format(iter))
         
                 for i in xrange(FLAGS.sample_size):                                                                                                                                                                                 
                     res_y, res_y_, res_loss = sess.run([label, logit, loss])
@@ -124,7 +129,9 @@ def main(_):
                 coord.join(threads)
 
             loss, f1 = f1score(reslist)
-            logging.info("epoch: {}, loss:{}, f1:{}".format(iter, loss, f1))
+            # loss, f1 = 0, 0
+            auc = aucscore(reslist)
+            logging.info("epoch: {}, loss:{:.6f}, f1:{:.6f}, auc:{:.6f}".format(iter, loss, f1, auc))
     
     logging.info('done')
 

@@ -1,7 +1,7 @@
 
 import random
 
-test_rate = 0.3
+test_rate = 0.2
 
 inpath = r'/Users/jianbinlin/DDNN/project/phone_data/phone_sample'
 out_train_path = r'/Users/jianbinlin/DDNN/project/phone_data/samples_train.txt'

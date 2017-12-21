@@ -69,15 +69,12 @@ def inference(label, fea, neig_id, neig_value):
     return logit, loss
 
 def inference_nodense(label, fea, neig_id, neig_value):
-    embedding_store = tf.Variable(tf.random_uniform([FLAGS.node_size, FLAGS.embedding_size],  -0.5, 0.5))
-    w_fea = tf.Variable(tf.random_uniform([FLAGS.fea_size, FLAGS.embedding_size], -0.5, 0.5))
+    embedding_store = tf.Variable(tf.random_uniform([FLAGS.node_size, FLAGS.embedding_size],  -0.1, 0.1))
     w1 = tf.Variable(tf.random_uniform([FLAGS.embedding_size, FLAGS.label_size], -0.5, 0.5))
 
     embedding = tf.nn.embedding_lookup_sparse(embedding_store, neig_id, neig_value, combiner='sum')
     
-    # h1_layer_act = tf.nn.relu(h1_layer)
     h1_layer_act = tf.nn.sigmoid(embedding)
-    # h1_layer_act = tf.nn.tanh(h1_layer)
     logit = tf.matmul(h1_layer_act, w1)
     
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=logit))
